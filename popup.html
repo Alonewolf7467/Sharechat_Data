@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ShareChat Extractor</title>
+  <style>
+    /* Reset styles */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    /* Main styles */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      width: 360px;
+      background-color: #1a1a1a;
+      color: #f0f0f0;
+      padding: 16px;
+    }
+    
+    h2 {
+      text-align: center;
+      color: #4db8ff;
+      margin-bottom: 15px;
+      font-size: 22px;
+      text-shadow: 0 0 10px rgba(77, 184, 255, 0.3);
+    }
+    
+    h3 {
+      font-size: 16px;
+      margin: 12px 0 8px;
+      color: #4db8ff;
+    }
+    
+    /* Tab navigation */
+    .tabs {
+      display: flex;
+      margin-bottom: 15px;
+      border-radius: 9px;
+      overflow: hidden;
+      background-color: #2d2d2d;
+      border: 1px solid #3a3a3a;
+    }
+    
+    .tab {
+      flex: 1;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      background-color: #2d2d2d;
+      color: #ccc;
+      border: none;
+      transition: all 0.3s ease;
+    }
+    
+    .tab.active {
+      background-color: #1a8cff;
+      color: white;
+      box-shadow: 0 0 15px rgba(77, 184, 255, 0.5);
+    }
+    
+    .tab:hover:not(.active) {
+      background-color: #3a3a3a;
+    }
+    
+    /* Content sections */
+    .tab-content {
+      display: none;
+    }
+    
+    .tab-content.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    /* Buttons */
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      background-color: #1a8cff;
+      color: white;
+      border: none;
+      border-radius: 9px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 8px rgba(77, 184, 255, 0.4);
+    }
+    
+    .btn:hover {
+      background-color: #0066cc;
+      box-shadow: 0 0 15px rgba(77, 184, 255, 0.7);
+      transform: translateY(-2px);
+    }
+    
+    .btn:active {
+      transform: translateY(1px);
+    }
+    
+    /* Action buttons container */
+    .action-btns {
+      display: flex;
+      gap: 10px;
+    }
+    
+    .action-btns .btn {
+      flex: 1;
+    }
+    
+    /* Form elements */
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #bbb;
+    }
+    
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      background-color: #333;
+      border: 1px solid #444;
+      border-radius: 5px;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    
+    /* Data display */
+    .data-box {
+      background-color: #2d2d2d;
+      border-radius: 9px;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #3a3a3a;
+    }
+    
+    .data-item {
+      margin: 8px 0;
+      display: flex;
+    }
+    
+    .data-label {
+      font-weight: bold;
+      color: #bbb;
+      width: 35%;
+    }
+    
+    .data-value {
+      color: #4db8ff;
+      width: 65%;
+      word-break: break-all;
+    }
+    
+    /* Keyboard shortcuts */
+    .shortcuts {
+      background-color: #2d2d2d;
+      border-radius: 9px;
+      padding: 12px;
+      margin: 10px 0;
+    }
+    
+    .shortcut-item {
+      display: flex;
+      align-items: center;
+      margin: 8px 0;
+    }
+    
+    .key {
+      background-color: #444;
+      padding: 3px 7px;
+      border-radius: 4px;
+      margin-right: 8px;
+      font-family: monospace;
+      font-size: 12px;
+      box-shadow: 0 2px 0 #222;
+    }
+    
+    /* History items */
+    .history-item {
+      background-color: #2d2d2d;
+      border-radius: 9px;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #3a3a3a;
+    }
+    
+    .history-date {
+      font-size: 12px;
+      color: #999;
+      text-align: right;
+      margin-top: 5px;
+    }
+    
+    .thumbnail {
+      width: 100%;
+      border-radius: 5px;
+      margin-top: 10px;
+      border: 1px solid #444;
+    }
+    
+    /* Status message */
+    .status {
+      background-color: #2d2d2d;
+      border-radius: 9px;
+      padding: 10px;
+      margin: 10px 0;
+      text-align: center;
+      font-size: 14px;
+      display: none;
+    }
+    
+    .status.success {
+      display: block;
+      color: #4CAF50;
+      border: 1px solid #4CAF50;
+    }
+    
+    .status.error {
+      display: block;
+      color: #F44336;
+      border: 1px solid #F44336;
+    }
+    
+    /* Scrollable areas */
+    .scrollable {
+      max-height: 350px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+    
+    .scrollable::-webkit-scrollbar {
+      width: 8px;
+    }
+    
+    .scrollable::-webkit-scrollbar-track {
+      background: #333;
+      border-radius: 4px;
+    }
+    
+    .scrollable::-webkit-scrollbar-thumb {
+      background: #555;
+      border-radius: 4px;
+    }
+    
+    .scrollable::-webkit-scrollbar-thumb:hover {
+      background: #777;
+    }
+  </style>
+</head>
+<body>
+  <h2>ShareChat Extractor</h2>
+  
+  <div class="tabs">
+    <button class="tab active" data-tab="main">Main</button>
+    <button class="tab" data-tab="history">History</button>
+    <button class="tab" data-tab="settings">Settings</button>
+  </div>
+  
+  <div id="statusMessage" class="status"></div>
+  
+  <!-- Main Tab -->
+  <div id="main" class="tab-content active">
+    <div class="action-btns">
+      <button id="captureBtn" class="btn">Capture</button>
+      <button id="extractDataBtn" class="btn">Extract Data</button>
+    </div>
+    
+    <h3>Last Extracted Data</h3>
+    <div id="lastExtraction" class="data-box">
+      <div class="data-item">
+        <div class="data-label">URL:</div>
+        <div id="lastUrl" class="data-value">-</div>
+      </div>
+      <div class="data-item">
+        <div class="data-label">Username:</div>
+        <div id="lastUsername" class="data-value">-</div>
+      </div>
+      <div class="data-item">
+        <div class="data-label">Likes:</div>
+        <div id="lastLikes" class="data-value">-</div>
+      </div>
+      <div class="data-item">
+        <div class="data-label">Identified As:</div>
+        <div id="lastIdentified" class="data-value">-</div>
+      </div>
+    </div>
+    
+    <button id="copyDataBtn" class="btn">Copy Data</button>
+    
+    <div class="shortcuts">
+      <div class="shortcut-item">
+        <span class="key">Alt+D</span> Extract Data (Refresh & Extract)
+      </div>
+      <div class="shortcut-item">
+        <span class="key">Alt+S</span> Capture Screenshot
+      </div>
+      <div class="shortcut-item">
+        <span class="key">Alt+E</span> Activate Extension
+      </div>
+    </div>
+  </div>
+  
+  <!-- History Tab -->
+  <div id="history" class="tab-content">
+    <h3>Data Extraction History</h3>
+    <div id="extractionHistory" class="scrollable">
+      <div class="history-item">Loading...</div>
+    </div>
+    
+    <h3>Screenshot History</h3>
+    <div id="screenshotHistory" class="scrollable">
+      <div class="history-item">Loading...</div>
+    </div>
+  </div>
+  
+  <!-- Settings Tab -->
+  <div id="settings" class="tab-content">
+    <h3>Your Information</h3>
+    <div class="data-box">
+      <label for="identifiedName">Your Name (for Excel):</label>
+      <input type="text" id="identifiedName" placeholder="Enter your name">
+      <button id="saveNameBtn" class="btn">Save Name</button>
+    </div>
+    
+    <h3>About</h3>
+    <div class="data-box">
+      <div class="data-item">
+        <div class="data-label">Version:</div>
+        <div class="data-value">1.0</div>
+      </div>
+      <div class="data-item">
+        <div class="data-label">Works on:</div>
+        <div class="data-value">ShareChat video pages</div>
+      </div>
+<div class="data-item">
+  <div class="data-label">Developer :</div>
+  <div class="data-value">
+    <a href="mailto:avinashthangaraju7467@gmail.com,rohithvs03@gmail.com" style="color: skyblue; text-decoration: none;">
+      Naruto
+    </a>
+  </div>
+</div>
+
+    </div>
+  </div>
+  
+  <script src="popup.js"></script>
+</body>
+</html>

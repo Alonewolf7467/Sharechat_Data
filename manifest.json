@@ -1,0 +1,59 @@
+{
+  "manifest_version": 3,
+  "name": "ShareChat Data Extractor",
+  "version": "1.0",
+  "description": "Extract data from ShareChat videos and take screenshots",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting",
+    "downloads",
+    "clipboardWrite",
+    "tabs"
+  ],
+  "host_permissions": [
+    "https://*.sharechat.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.sharechat.com/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "commands": {
+    "activate-extension": {
+      "suggested_key": {
+        "default": "Alt+E"
+      },
+      "description": "Activate the extension"
+    },
+    "extract-data": {
+      "suggested_key": {
+        "default": "Alt+D"
+      },
+      "description": "Refresh page and extract data"
+    },
+    "take-screenshot": {
+      "suggested_key": {
+        "default": "Alt+S"
+      },
+      "description": "Take a screenshot"
+    }
+  }
+}
